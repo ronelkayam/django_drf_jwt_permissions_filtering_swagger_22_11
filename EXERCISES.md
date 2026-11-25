@@ -64,4 +64,17 @@ The goal of these exercises is to practice extending a production-grade backend 
    * **Important:** Exclude MongoDB's internal `_id` ObjectId field in your query projection (`{'_id': 0}`), otherwise JSON serialization will fail!
 2. **Register the URL Route (`workouts/urls.py`):**
    * Wire the new view to `api/audit-logs/` (in `workouts/urls.py`, add `path('audit-logs/', UserAuditLogView.as_view(), name='audit-logs')`).
-3. **Document in Swagger (`drf-spectacular
+3. **Document in Swagger (`drf-spectacular`):**
+   * Decorate the `get` method with `@extend_schema(responses={200: dict})` (from `drf_spectacular.utils`) so the endpoint appears cleanly in Swagger UI without schema warnings.
+
+---
+
+## 🧪 Exercise 4 (Bonus): Automated Integration Tests (`workouts/tests.py`)
+
+**Goal:** Ensure the new features are protected against regressions.
+
+1. Add a new test method named `test_user_stats_and_audit_logs_endpoints` inside `WorkoutAPITests`.
+2. The test should:
+   * Authenticate as `moshe` and send a `GET` request to `/api/workouts/my_stats/`.
+   * Assert that `total_minutes` equals `105` (`45 + 60`) and `total_calories` equals `750` (`400 + 350`).
+   * Send a `GET` request to `/api/audit-logs/` and assert that exactly 2 audit logs are returned for `moshe`, while another user (`david`) receives an empty list (`[]`).
